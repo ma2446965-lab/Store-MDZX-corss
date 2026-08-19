@@ -13,6 +13,24 @@
   var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
   var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
 
+  /* ── 0. Safety net: لو أي حاجة اتعرقلت، المحتوى مبيفضلش مخفي ── */
+  window.setTimeout(function () {
+    try {
+      var visibleCount = document.querySelectorAll(".reveal.is-visible").length;
+      var first = document.querySelector(".reveal");
+      var inInitialView = first && first.getBoundingClientRect().top < (window.innerHeight || 800);
+      if (first && visibleCount === 0 && inInitialView) {
+        document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("is-visible"); });
+        document.querySelectorAll("[data-count]").forEach(function (el) {
+          el.textContent = el.getAttribute("data-count");
+        });
+        var hp = document.getElementById("heroProgress");
+        if (hp) hp.style.width = "78%";
+        document.documentElement.classList.add("force-reveal");
+      }
+    } catch (e) { /* silent by design */ }
+  }, 2500);
+
   /* ── 1. Theme (dark / light) ─────────────────────────── */
   var themeMeta = $('meta[name="theme-color"]');
   var savedTheme = null;
@@ -29,9 +47,8 @@
     }
   }
 
-  applyTheme(savedTheme === "light" || savedTheme === "dark"
-    ? savedTheme
-    : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"), false);
+  /* أول زيارة دايمًا Dark (هوية البراند) — وبعد كده اختيار المستخدم هو اللي بيتحفظ */
+  applyTheme(savedTheme === "light" || savedTheme === "dark" ? savedTheme : "dark", false);
 
   $("#themeToggle").addEventListener("click", function () {
     var next = docEl.getAttribute("data-theme") === "dark" ? "light" : "dark";

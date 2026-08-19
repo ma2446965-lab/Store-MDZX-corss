@@ -2414,6 +2414,10 @@ html[data-theme="light"] .site-footer { background: #ECEDE9; color: #4A4E44; bor
   to { opacity: 1; transform: none; }
 }
 
+/* safety net rules */
+html.force-reveal .reveal { opacity: 1 !important; transform: none !important; }
+html.force-reveal .market-card .market-meter i { width: var(--w) !important; }
+
 /* ---------- 27. Theme transition helper ---------- */
 html.theming, html.theming body, html.theming .site-header, html.theming .pain-card,
 html.theming .pillar, html.theming .module, html.theming .market-card, html.theming .acc,
